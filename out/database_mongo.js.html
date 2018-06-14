@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: database/mongo.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: database/mongo.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+const MongoDB = require('mongodb').MongoClient;
+const mongoUtils = require('./../utils/mongoUtils')(MongoDB);
+
+/**
+ * MongoDB Module - Manages a MongoDB connection and a basic CRUD
+ * @module MongoDB database/mongo
+ * @param {object} config Configuration parameters
+ */
+function mongo(config) {
+  let db = null;
+
+  return {
+    /**
+     * Connects to MongoDB.
+     * @returns {Promise} Promise object
+     */
+    connection(){
+      return new Promise((resolve, reject) => {
+        MongoDB.connect(config.uri)
+          .then((client) => {
+            db = client.db(config.database);
+            resolve(`MongoDB - connected to ${config.database}`);
+          })
+          .catch((err) => { 
+            reject(err);
+          });        
+      });
+    },
+    /**
+     * Saves a new document in the specified collection.
+     * @param {array} args Mixed array as follows: [ 'collection', { property: value } ]
+     * @example &lt;caption>Example usage:&lt;/caption>
+     * // returns { title: 'Sample task', done: false, _id: 5b1fdd384083073ccb9ce59c }
+     * MongoDB.create(['tasks', { title: 'Sample task', done: false } ]);
+     * @returns {Promise} Promise object
+     */
+    create(args){
+      return new Promise((resolve, reject) => {
+        let [coll, values] = args;
+
+        db.collection(coll).insertOne(values)
+          .then((result) => {
+            let [newDocument] = result.ops;
+            resolve(newDocument);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    /**
+     * Gets all stored documents from the specified collection.
+     * @param {string} coll Collection name
+     * @example &lt;caption>Example usage:&lt;/caption>
+     * // returns [ { _id: 5b1fdd384083073ccb9ce59c, title: 'Sample task', done: false }, ... ]
+     * MongoDB.read('tasks');
+     * @returns {Promise} Promise object
+     */
+    read(coll){
+      return new Promise((resolve, reject) => {
+        db.collection(coll).find({}).toArray()
+          .then((documents) => {
+            resolve(documents);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    /**
+     * Updates an existing document from the specified collection.
+     * @param {array} args Mixed array with as follows: [ 'table', { propery: value }, { propery : value } ]
+     * @example &lt;caption>Example usage:&lt;/caption>
+     * // returns { _id: 5b1fdd384083073ccb9ce59c, title: 'Updated task', done: true }
+     * MongoDB.update(['tasks', { title: 'Updated task', done: true }, { _id: '5b1fdd384083073ccb9ce59c' }]);
+     * @returns {Promise} Promise object
+     */
+    update(args){
+      return new Promise((resolve, reject) => {
+        let [coll, values, criteria] = args;
+        criteria = mongoUtils.parseObjectId(criteria);
+
+        db.collection(coll).findAndModify(criteria, [], { $set: values }, { upsert: false, new : true })
+          .then((res) => {
+            resolve(res.value ? res.value : {});
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    /**
+     * Removes an existing document from the specified collection.
+     * @param {array} args Mixed array with the following structure: [ 'collection', { property: value } ]
+     * @example &lt;caption>Example usage:&lt;/caption>
+     * // returns 1
+     * MongoDB.delete( ['tasks', { _id : '5b1fdd384083073ccb9ce59c' }] );
+     * // returns 0
+     * MongoDB.delete( ['tasks', { title : 'I do not exist!' }] );
+     * @returns {Promise} Promise object
+     */
+    delete(args){
+      return new Promise((resolve, reject) => {
+        let [coll, criteria] = args;
+        criteria = mongoUtils.parseObjectId(criteria);
+
+        db.collection(coll).deleteOne(criteria)
+          .then((res) => {
+            resolve((res.result.n).toString());
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+  }
+}
+
+module.exports = mongo;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MongoDB%2520database_mongo.html">MongoDB database/mongo</a></li><li><a href="module-MongoUtils%2520utils_mongoUtils.html">MongoUtils utils/mongoUtils</a></li><li><a href="module-MySQL%2520database_mysql.html">MySQL database/mysql</a></li><li><a href="module-MySQLUtils%2520utils_mysqlUtils.html">MySQLUtils utils/mysqlUtils</a></li></ul><h3>Classes</h3><ul><li><a href="Task.html">Task</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jun 14 2018 13:40:17 GMT+0100 (WEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
