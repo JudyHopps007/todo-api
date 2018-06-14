@@ -3,8 +3,9 @@ const MongoDB = require('mongodb').MongoClient;
 const mongoUtils = require('./../utils/mongoUtils')(MongoDB);
 
 /**
- * Manages a MongoDB connection and a basic CRUD
- * @param {Object} config Configuration parameters
+ * MongoDB Module - Manages a MongoDB connection and a basic CRUD
+ * @module MongoDB database/mongo
+ * @param {object} config Configuration parameters
  */
 function mongo(config) {
   let db = null;

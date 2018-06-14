@@ -1,6 +1,11 @@
 
 const ObjectId = require('mongodb').ObjectId;
 
+/**
+ * MongoDB Utils Module
+ * @module MongoUtils utils/mongoUtils
+ * @param {object} MongoDB MongoDB module
+ */
 function mongoUtils (MongoDB) {
   return {
     /**

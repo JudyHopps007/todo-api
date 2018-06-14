@@ -4,7 +4,8 @@ const mysqlUtils = require('./../utils/mysqlUtils')(MySQL);
 const sampleSql = `${__dirname}/samples/dbtodo.sql`;
 
 /**
- * Manages a MySQL connection and a basic CRUD.
+ * MySQL Module - Manages a MySQL connection and a basic CRUD.
+ * @module MySQL database/mysql
  * @param {object} config Configuration parameters
  */
 function mysql(config) {

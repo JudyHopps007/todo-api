@@ -1,6 +1,12 @@
 
+/**
+ * Task class
+ */
 class Task {
-
+  /**
+   * Create a task.
+   * @param {object} database - Database
+   */
   constructor(database){
     this.database = database;
   }

@@ -1,6 +1,11 @@
 
 const fs = require('fs');
 
+/**
+ * MySQL Utils Module
+ * @module MySQLUtils utils/mysqlUtils
+ * @param {object} MySQL MySQL module
+ */
 function mysqlUtils (MySQL) {
   return {
     /**
