@@ -13,8 +13,10 @@
   "dependencies": {
     "body-parser": "~1.0.1",
     "express": "^4.16.2",
-    "mongoose": "^4.12.1",
-    "morgan": "^1.9.0"
+    "mongodb": "^3.0.10",
+    "morgan": "^1.9.0",
+    "promise-mysql": "^3.2.1",
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "nodemon": "^1.17.1"
